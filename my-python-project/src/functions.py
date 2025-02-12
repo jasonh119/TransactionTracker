@@ -12,6 +12,7 @@ def process_transactions(file_path):
     # Read CSV with specific parameters to handle messy data
     df = pd.read_csv(file_path, 
                      skiprows=5,
+                     on_bad_lines='warn',      # Warns and skips bad lines
                      skipinitialspace=True,    # Skip extra whitespace
                      quoting=csv.QUOTE_ALL,    # Quote all fields
                      thousands=',',            # Handle thousands separator
