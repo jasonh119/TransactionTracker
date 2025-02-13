@@ -1,15 +1,12 @@
 #import logging
 import config
 import functions 
+import ai_functions
 import os
 import pandas as pd 
 
-# TODO - Move to it's own file, and config file
-if __name__ == "__main__":
-    
-    # This is the main function that will be executed when the script is run
-    # It reads the transtionas data from many csv files, and builds a dataframe useing process_transactions function
-
+# main function reads the transtionas data from many csv files, and builds a dataframe useing process_transactions function
+def process_transactions():
     # Process transactions
     input_path = config.INPUT_DIR + "\\" # Path to input files
 
@@ -35,3 +32,14 @@ if __name__ == "__main__":
     # Save to Excel
     output_path = os.path.join(config.OUTPUT_DIR, "transactions_cleaned.xlsx")
     transactions_df.to_excel(output_path, index=False)
+
+if __name__ == "__main__":
+    
+    # Set up logging
+    #logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    
+    # Call the main function
+    process_transactions()
+
+    # Call the AI function
+    # ai_functions.initial_chat()
