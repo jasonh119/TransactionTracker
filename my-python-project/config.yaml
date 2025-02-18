@@ -1,0 +1,28 @@
+# Application Configuration
+app:
+  name: TransactionTracker
+  version: 1.0.0
+
+# Data Path Configuration
+paths:
+  data: "D:/01_Data/OneDrive/Development/Python/TestData"
+  input_dir: "${paths.data}/input/"
+  output_dir: "${paths.data}/output/"
+
+# Logging Configuration 
+logging:
+  level: INFO
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  file: "${paths.data}/logs/app.log"
+
+# Parser Configuration
+parsers:
+  supported_formats:
+    - standardchartered
+    - journey
+  default_parser: standardchartered
+
+# API Configuration (if needed in future)
+api:
+  timeout: 30
+  retry_attempts: 3

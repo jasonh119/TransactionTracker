@@ -1,5 +1,4 @@
-#import logging
-import config
+from config import config  # Import the config instance instead of the module
 import functions 
 import ai_functions
 import os
@@ -15,8 +14,8 @@ def process_transactions():
     all_transactions = pd.DataFrame()
     
     # Process each file in the input directory
-    for filename in os.listdir(config.INPUT_DIR):
-        file_path = os.path.join(config.INPUT_DIR, filename)
+    for filename in os.listdir(config.input_dir):
+        file_path = os.path.join(config.input_dir, filename)
         if os.path.isfile(file_path):
             logger.info(f"Processing file: {filename}")
             try:
@@ -31,12 +30,12 @@ def process_transactions():
     
     if not all_transactions.empty:
         # Save to CSV file
-        output_file = os.path.join(config.OUTPUT_DIR, "combined_transactions.csv")
+        output_file = os.path.join(config.output_dir, "combined_transactions.csv")
         all_transactions.to_csv(output_file, index=False)
         logger.info(f"Saved {len(all_transactions)} transactions to {output_file}")
         
         # Save to Excel file
-        output_file_excel = os.path.join(config.OUTPUT_DIR, "combined_transactions.xlsx")
+        output_file_excel = os.path.join(config.output_dir, "combined_transactions.xlsx")
         all_transactions.to_excel(output_file_excel, index=False)
         logger.info(f"Saved {len(all_transactions)} transactions to {output_file_excel}")
 
