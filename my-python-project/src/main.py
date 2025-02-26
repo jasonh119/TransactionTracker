@@ -47,7 +47,7 @@ def process_transactions():
 if __name__ == "__main__":
     logger.info("Transaction Tracker application starting")
     process_transactions()
-    logger.info("Transactions processed. Chat with the AI assistant")
+    logger.info(f"Transactions processed. Chat with the AI assistant")
     
     # TODO - add flag to yml file to enable/disable Gemini chat for other contributors  
     ai_functions.initial_gemini_chat()
