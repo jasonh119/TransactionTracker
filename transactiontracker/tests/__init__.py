@@ -1,4 +1,4 @@
-my-python-project
+transactiontracker
 ├── src
 │   ├── __init__.py
 │   └── main.py
