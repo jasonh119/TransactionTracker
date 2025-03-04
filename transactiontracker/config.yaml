@@ -26,3 +26,80 @@ parsers:
 api:
   timeout: 30
   retry_attempts: 3
+
+# Expense Categorization Configuration
+expense_categories:
+  Food:
+    - Groceries
+    - Restaurants
+    - Delivery
+    - Cafes
+  Transportation:
+    - Public Transport
+    - Taxi
+    - Fuel
+    - Car Maintenance
+  Housing:
+    - Rent
+    - Utilities
+    - Maintenance
+    - Furniture
+  Entertainment:
+    - Movies
+    - Subscriptions
+    - Games
+    - Events
+  Shopping:
+    - Clothing
+    - Electronics
+    - Household Items
+    - Personal Care
+  Health:
+    - Medical
+    - Pharmacy
+    - Insurance
+    - Fitness
+  Education:
+    - Tuition
+    - Books
+    - Courses
+    - Supplies
+  Travel:
+    - Flights
+    - Accommodation
+    - Activities
+    - Travel Insurance
+  Financial:
+    - Investments
+    - Fees
+    - Interest
+    - Taxes
+  Transfers:
+    - Family
+    - Friends
+    - Self
+    - Savings
+
+# PayNow Vendor Mapping
+paynow_vendors:
+  - vendor: "PAYNOW-GRABFOOD"
+    category: "Food"
+    subcategory: "Delivery"
+  - vendor: "PAYNOW-FAIRPRICE"
+    category: "Food"
+    subcategory: "Groceries"
+  - vendor: "PAYNOW-LAZADA"
+    category: "Shopping"
+    subcategory: "Household Items"
+  - vendor: "PAYNOW-SHOPEE"
+    category: "Shopping"
+    subcategory: "Household Items"
+
+# External Transactions to Individuals
+external_individuals:
+  - name: "JOHN DOE"
+    category: "Transfers"
+    subcategory: "Friends"
+  - name: "JANE SMITH"
+    category: "Transfers"
+    subcategory: "Family"
