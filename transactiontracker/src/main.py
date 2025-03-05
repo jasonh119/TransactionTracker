@@ -94,7 +94,7 @@ if __name__ == "__main__":
             print("⏳ This may take a moment...")
             
             try:
-                categorized_df = categorize_transactions()
+                categorized_df = categorize_transactions(transactions_df)
                 if categorized_df is not None:
                     logger.info(f"Successfully categorized {len(categorized_df)} transactions")
                     print(f"\n✅ Successfully categorized {len(categorized_df)} transactions!")
