@@ -22,10 +22,9 @@ parsers:
     - journey
   default_parser: standardchartered
 
-# API Configuration (if needed in future)
+# API Configuration 
 api:
-  timeout: 30
-  retry_attempts: 3
+  gemini_model: "gemini-2.0-pro-exp-02-05"            # gemini-2.0-pro-exp-02-05      gemini-2.0-flash"
 
 # Expense Categorization Configuration
 expense_categories:

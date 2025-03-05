@@ -1,11 +1,17 @@
 # Transaction Tracker
 
 ## Overview
-This project is a Python application for my refreshing my engineering and coding skills and while doing a part time machine learning course.  I got bored with the datasets in the course and looked for something chunkier to build my own dataset from transaction history that is quite dirty and poorly formatted and from many different financial institutions. 
+This project is a Python application for refreshing my engineering and coding skills and while doing a machine learning course.  I was looking for something chunkier to play with so built my own dataset from transaction history that is quite dirty and poorly formatted and from many different financial institutions and countries. 
 
-I then got carried away and connected it to gemini with a view to exploring using this with this dataset and others in future programmatically. 
+I then got carried away and connected it to gemini with a view to exploring using it with this dataset and others in future programmatically. 
 
-First example is classifying expenses from transactions.  I haven't package this up properly yet and needs to implement a branching strategy if anyone wants to contribute. 
+First example is classifying expenses from transactions.  Supports SC Accounts and SC Card .csvs currently
+
+To run this, you need 
+a) a gemini API - free will do and 
+b) update environment variable file with your `GEMINI_API_KEY` and 
+c) update parameters in config.yaml file - model: gemini-2.0-flash will do for now - Pro model in testing, local model under development
+d) SC account or credit card Dataset in the input directory - other banks csv's under development
 
 Necessity is the mother of invention.
 
@@ -76,9 +82,15 @@ external_individuals:
 ## Running Tests
 To run the unit tests, use the following command:
 
-```
-NOT IMPELMENTED YET python -m unittest discover -s tests
-```
+
+## TODOs and NOT IMPLEMENTED YET
+(in no particular order)
+- Unit testing
+- Other Banks formats csv extracts
+- Handling large csv's for categorisation - gemini truncates the response - so crashes 
+- local model option for security - e.g. lama2, llama3 to
+- other commercial models for more tokens output in particularly 
+- Move external transfers and paynow mappings to secondary secrets file (.env or second yaml file) 
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.

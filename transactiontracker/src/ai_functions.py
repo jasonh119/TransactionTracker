@@ -25,7 +25,10 @@ def initial_gemini_chat():
         genai.configure(api_key=API_KEY)
 
         # Initialize the Gemini model
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model_name = config.get('api.gemini_model')        
+        logger.debug(f"Using model: {model_name}")  
+        model = genai.GenerativeModel(model_name)
+
         chat_session = model.start_chat(history=[])
         logger.debug("Chat session started successfully")
         print("💬 Gemini Chatbot - Type 'exit' to quit.\n")
@@ -107,8 +110,10 @@ def initial_gemini_csv_categorisation(input_file=None):
         # Configure the API and Gemini
         genai.configure(api_key=API_KEY)
 
-        # Initialize the Gemini model - using Pro for structured data tasks
-        model = genai.GenerativeModel("gemini-2.0-pro-exp-02-05")
+        # Initialize the Gemini model
+        model_name = config.get('api.gemini_model')        
+        logger.debug(f"Using model: {model_name}")  
+        model = genai.GenerativeModel(model_name)
         
         # Prepare the prompt with clear instructions about JSON format
         prompt = f"""
