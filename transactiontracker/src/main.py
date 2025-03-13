@@ -123,3 +123,13 @@ if __name__ == "__main__":
     
     logger.info("Transaction Tracker application completed")
     print("\n🎉 Transaction Tracker application completed. Thank you for using the service!")
+
+
+    # Ask user if they want to chat with Llama 3.2
+    user_input = input("\n💬 Do you want to chat with the Llama 3.2 AI assistant? (y/n): ")
+    if user_input.lower() == 'y':
+        logger.info("Starting Llama 3.2 chat")
+        ai_functions.chat_with_llama32()
+    
+    logger.info("Transaction Tracker application completed")
+    print("\n🎉 Transaction Tracker application completed. Thank you for using the service!")

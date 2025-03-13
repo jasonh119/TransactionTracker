@@ -91,6 +91,7 @@ To run the unit tests, use the following command:
 - local model option for security - e.g. lama2, llama3 to
 - other commercial models for more tokens output in particularly 
 - Move external transfers and paynow mappings to secondary secrets file (.env or second yaml file) 
+- teach model to classify income like salary and interest different to inbound transfer from another persona account which is different again to inbound transfer from someone else
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.

@@ -6,6 +6,9 @@ import re
 import json
 from logger import setup_logger
 from config import config
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
+from threading import Thread
 
 logger = setup_logger(__name__)
 
@@ -222,3 +225,121 @@ def send_csv_to_gemini_and_return_df(chat_session, file_path):
     # This function is no longer used but kept for reference
     logger.warning("send_csv_to_gemini_and_return_df is deprecated, use initial_gemini_csv_categorisation instead")
     return None
+
+def chat_with_llama32():
+    """
+    Initialize and chat with the Llama 3.2-1B model using GPU acceleration.
+    This function loads the model from the local checkpoint and starts an interactive chat session.
+    Uses Hugging Face Transformers library for compatibility with Windows.
+    """
+    logger.info("Llama 3.2-1B Chat Initializing")
+    
+    # Define the model path
+    model_path = os.path.join(os.path.expanduser("~"), ".llama", "checkpoints", "Llama3.2-1B")
+    
+    if not os.path.exists(model_path):
+        logger.error(f"Llama 3.2-1B model not found at: {model_path}")
+        print(f"❌ Model not found at: {model_path}")
+        return
+    
+    logger.info(f"Loading Llama 3.2-1B model from: {model_path}")
+    print("🦙 Loading Llama 3.2-1B model... This may take a moment.")
+    
+    try:
+        # Check if GPU is available
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        if device == "cuda":
+            logger.info(f"GPU detected: {torch.cuda.get_device_name(0)}")
+            print(f"🚀 Using GPU: {torch.cuda.get_device_name(0)}")
+        else:
+            logger.warning("No GPU detected, falling back to CPU (this will be slow)")
+            print("⚠️ No GPU detected, falling back to CPU (this will be slow)")
+        
+        # Load the tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(model_path)
+        
+        # Load the model with GPU acceleration if available
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+            low_cpu_mem_usage=True,
+            device_map="auto"  # Automatically use GPU if available
+        )
+        
+        logger.info("Llama 3.2-1B model loaded successfully")
+        print("\n🦙 Llama 3.2-1B Chatbot - Type 'exit' to quit.\n")
+        
+        # Chat history for context
+        chat_history = []
+        
+        # Chat loop
+        while True:
+            user_input = input("You: ")
+            if user_input.lower() == "exit":
+                print("Goodbye! 👋")
+                break
+            
+            # Format the prompt with chat history
+            if chat_history:
+                prompt = "".join(chat_history)
+                prompt += f"\nUser: {user_input}\nLlama: "
+            else:
+                prompt = f"User: {user_input}\nLlama: "
+            
+            logger.debug(f"Sending prompt: {prompt}")
+            
+            # Tokenize the input
+            inputs = tokenizer(prompt, return_tensors="pt").to(device)
+            
+            # Set up streamer for real-time output
+            streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+            
+            # Generate in a separate thread to allow streaming
+            generation_kwargs = {
+                "input_ids": inputs["input_ids"],
+                "attention_mask": inputs["attention_mask"],
+                "max_new_tokens": 1024,
+                "temperature": 0.7,
+                "top_p": 0.95,
+                "streamer": streamer,
+                "do_sample": True,
+            }
+            
+            thread = Thread(target=model.generate, kwargs=generation_kwargs)
+            thread.start()
+            
+            # Print the response as it's generated
+            print("Llama: ", end="", flush=True)
+            generated_text = ""
+            for text_chunk in streamer:
+                print(text_chunk, end="", flush=True)
+                generated_text += text_chunk
+                
+                # Check for end of response
+                if "\nUser:" in generated_text:
+                    generated_text = generated_text.split("\nUser:")[0]
+                    break
+            
+            print()  # New line after response
+            
+            logger.debug(f"Received response: {generated_text}")
+            
+            # Update chat history (keep it manageable to avoid context overflow)
+            chat_history.append(f"User: {user_input}\nLlama: {generated_text}\n")
+            
+            # Limit history to last 10 exchanges to prevent context window overflow
+            if len(chat_history) > 10:
+                chat_history = chat_history[-10:]
+                
+    except Exception as e:
+        logger.error(f"Error in Llama chat: {str(e)}")
+        print(f"❌ Error: {str(e)}")
+        
+    finally:
+        logger.info("Llama chat session ended")
+        # Clean up resources if needed
+        if 'model' in locals() and device == "cuda":
+            del model
+            torch.cuda.empty_cache()
+            logger.debug("GPU cache cleared")
