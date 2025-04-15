@@ -1,4 +1,4 @@
-from config import config  # Import the config instance instead of the module
+from config import config   
 import functions 
 import ai_functions
 import os
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     user_input = input("\n💬 Do you want to chat with the Llama 3.2 AI assistant? (y/n): ")
     if user_input.lower() == 'y':
         logger.info("Starting Llama 3.2 chat")
-        ai_functions.chat_with_llama32()
+        ai_functions.chat_with_local_llama32()
     
     logger.info("Transaction Tracker application completed")
     print("\n🎉 Transaction Tracker application completed. Thank you for using the service!")

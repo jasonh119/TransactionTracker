@@ -4,6 +4,7 @@ import pandas as pd
 import yaml
 import re
 import json
+import requests
 from logger import setup_logger
 from config import config
 import torch
@@ -226,12 +227,69 @@ def send_csv_to_gemini_and_return_df(chat_session, file_path):
     logger.warning("send_csv_to_gemini_and_return_df is deprecated, use initial_gemini_csv_categorisation instead")
     return None
 
-def chat_with_llama32():
+def chat_with_local_llama32():
     """
+    Setting up a simply chat interface with my local llama32 model
+    """
+    # Define the Ollama API endpoint
+    OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
+
+    # Define the model and the prompt
+    MODEL_NAME = "llama3.2"  # Or whichever model you have pulled and want to use
+    YOUR_PROMPT = "Why is the sky blue?"
+
+    # Define the data payload for the POST request
+    data = {
+        "model": MODEL_NAME,
+        "prompt": YOUR_PROMPT,
+        "stream": False  # Set to False to get the full response at once
+        # Add other parameters here if needed (e.g., options, system prompt)
+        # "system": "You are a helpful assistant.",
+        # "options": {
+        #     "temperature": 0.7
+        # }
+    }
+
+    try:
+        # Send the POST request
+        response = requests.post(OLLAMA_ENDPOINT, json=data)
+
+        # Raise an exception if the request was unsuccessful (e.g., 4xx or 5xx errors)
+        response.raise_for_status()
+
+        # Parse the JSON response
+        response_data = response.json()
+
+        # Extract the actual response text
+        generated_text = response_data.get("response", "No response found.")
+
+        print(f"Model: {MODEL_NAME}")
+        print(f"Prompt: {YOUR_PROMPT}")
+        print("-" * 20)
+        print(f"Response:\n{generated_text.strip()}")
+
+        # You can also print other details if interested
+        # print("\nFull Response JSON:")
+        # print(json.dumps(response_data, indent=2))
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error connecting to Ollama API: {e}")
+        print("Please ensure the Ollama application is running.")
+    except json.JSONDecodeError:
+        print(f"Error decoding JSON response: {response.text}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+    
+
+
+#Old Windows CUDA Model chat - attempt - never fully working - CUDA worked, but not call llama kept trying to find tensorflow and i couldn't get the verson compatible
+"""def chat_with_llama32():
+    
     Initialize and chat with the Llama 3.2-1B model using GPU acceleration.
     This function loads the model from the local checkpoint and starts an interactive chat session.
     Uses Hugging Face Transformers library for compatibility with Windows.
-    """
+    
     logger.info("Llama 3.2-1B Chat Initializing")
     
     # Define the model path
@@ -343,3 +401,4 @@ def chat_with_llama32():
             del model
             torch.cuda.empty_cache()
             logger.debug("GPU cache cleared")
+"""

@@ -1,11 +1,11 @@
 # Application Configuration
 app:
   name: TransactionTracker
-  version: 1.0.0
+  version: 0.6.0
 
 # Data Path Configuration
 paths:
-  data: "D:/01_Data/OneDrive/Development/Python/TestData"
+  data: "/Users/jasonhelbig/Development/TestData"
   input_dir: "${paths.data}/input/"
   output_dir: "${paths.data}/output/"
 
