@@ -229,58 +229,111 @@ def send_csv_to_gemini_and_return_df(chat_session, file_path):
 
 def chat_with_local_llama32():
     """
-    Setting up a simply chat interface with my local llama32 model
+    Setting up a chat interface with the local llama32 model.
+    Uses a loop to allow continuous conversation until the user exits.
     """
+    logger.info("Starting chat with local Llama 3.2 model")
+    
     # Define the Ollama API endpoint
     OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
-
-    # Define the model and the prompt
-    MODEL_NAME = "llama3.2"  # Or whichever model you have pulled and want to use
-    YOUR_PROMPT = "Why is the sky blue?"
-
-    # Define the data payload for the POST request
-    data = {
-        "model": MODEL_NAME,
-        "prompt": YOUR_PROMPT,
-        "stream": False  # Set to False to get the full response at once
-        # Add other parameters here if needed (e.g., options, system prompt)
-        # "system": "You are a helpful assistant.",
-        # "options": {
-        #     "temperature": 0.7
-        # }
-    }
-
-    try:
-        # Send the POST request
-        response = requests.post(OLLAMA_ENDPOINT, json=data)
-
-        # Raise an exception if the request was unsuccessful (e.g., 4xx or 5xx errors)
-        response.raise_for_status()
-
-        # Parse the JSON response
-        response_data = response.json()
-
-        # Extract the actual response text
-        generated_text = response_data.get("response", "No response found.")
-
-        print(f"Model: {MODEL_NAME}")
-        print(f"Prompt: {YOUR_PROMPT}")
-        print("-" * 20)
-        print(f"Response:\n{generated_text.strip()}")
-
-        # You can also print other details if interested
-        # print("\nFull Response JSON:")
-        # print(json.dumps(response_data, indent=2))
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error connecting to Ollama API: {e}")
-        print("Please ensure the Ollama application is running.")
-    except json.JSONDecodeError:
-        print(f"Error decoding JSON response: {response.text}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-
     
+    # Define the model
+    MODEL_NAME = "llama3.2"  # Or whichever model you have pulled and want to use
+    
+    # System prompt to set the assistant's behavior
+    SYSTEM_PROMPT = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question is not clear or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
+    
+    logger.info(f"Using model: {MODEL_NAME}")
+    print(f"💬 Llama 3.2 Chatbot - Type 'exit' to quit.\n")
+    
+    try:
+        # Initialize conversation history
+        conversation_history = []
+        
+        while True:
+            # Get user input
+            user_input = input("You: ")
+            
+            # Check if user wants to exit
+            if user_input.lower() in ["exit", "quit", "bye"]:
+                logger.info("User exited chat")
+                print("Goodbye! 👋")
+                break
+            
+            logger.debug(f"Sending message to Llama: {user_input}")
+            
+            # Prepare the conversation context
+            if not conversation_history:
+                # First message, include system prompt
+                prompt = f"{SYSTEM_PROMPT}\n\nUser: {user_input}\nAssistant:"
+            else:
+                # Include conversation history
+                prompt = "\n".join(conversation_history) + f"\nUser: {user_input}\nAssistant:"
+            
+            # Define the data payload for the POST request
+            data = {
+                "model": MODEL_NAME,
+                "prompt": prompt,
+                "stream": False,  # Set to False to get the full response at once
+                "options": {
+                    "temperature": 0.7,
+                    "top_p": 0.95,
+                    "top_k": 40
+                }
+            }
+            
+            try:
+                # Send the POST request
+                logger.debug("Sending request to Ollama API")
+                response = requests.post(OLLAMA_ENDPOINT, json=data)
+                
+                # Raise an exception if the request was unsuccessful
+                response.raise_for_status()
+                
+                # Parse the JSON response
+                response_data = response.json()
+                
+                # Extract the actual response text
+                generated_text = response_data.get("response", "No response found.")
+                
+                # Print the response
+                print(f"Assistant: {generated_text.strip()}")
+                
+                # Update conversation history
+                conversation_history.append(f"User: {user_input}")
+                conversation_history.append(f"Assistant: {generated_text.strip()}")
+                
+                # Keep conversation history at a reasonable size
+                if len(conversation_history) > 10:  # Keep last 5 exchanges (10 messages)
+                    conversation_history = conversation_history[-10:]
+                
+                logger.debug(f"Received response: {generated_text[:100]}...")
+                
+            except requests.exceptions.RequestException as e:
+                error_msg = f"Error connecting to Ollama API: {e}"
+                logger.error(error_msg)
+                print(f"❌ {error_msg}")
+                print("Please ensure the Ollama application is running.")
+                break
+            except json.JSONDecodeError:
+                error_msg = f"Error decoding JSON response"
+                logger.error(f"{error_msg}: {response.text}")
+                print(f"❌ {error_msg}")
+                break
+            except Exception as e:
+                error_msg = f"An unexpected error occurred: {e}"
+                logger.error(error_msg, exc_info=True)
+                print(f"❌ {error_msg}")
+                break
+                
+    except KeyboardInterrupt:
+        logger.info("Chat interrupted by user (KeyboardInterrupt)")
+        print("\nChat interrupted. Goodbye! 👋")
+    except Exception as e:
+        logger.error(f"Unexpected error in chat loop: {e}", exc_info=True)
+        print(f"❌ An error occurred: {e}")
+    finally:
+        logger.info("Chat with Llama 3.2 ended")
 
 
 #Old Windows CUDA Model chat - attempt - never fully working - CUDA worked, but not call llama kept trying to find tensorflow and i couldn't get the verson compatible
