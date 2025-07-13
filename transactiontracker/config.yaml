@@ -5,7 +5,7 @@ app:
 
 # Data Path Configuration
 paths:
-  data: "/Users/jasonhelbig/Development/TestData"
+  data: "D:/01_Data/OneDrive/Development/Python/TestData"   # /Users/jasonhelbig/Development/TestData
   input_dir: "${paths.data}/input/"
   output_dir: "${paths.data}/output/"
 
@@ -24,8 +24,7 @@ parsers:
 
 # API Configuration 
 api:
-  gemini_model: "gemini-2.0-pro-exp-02-05"            # gemini-2.0-pro-exp-02-05      gemini-2.0-flash"
-
+  gemini_model: "gemini-2.5-flash"            # gemini-2.5-pro-preview-03-25   gemini-2.5-flash    gemini-2.5-pro
 # Expense Categorization Configuration
 expense_categories:
   Food:
