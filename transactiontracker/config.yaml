@@ -25,6 +25,7 @@ parsers:
 # API Configuration 
 api:
   gemini_model: "gemini-2.5-flash"            # gemini-2.5-pro-preview-03-25   gemini-2.5-flash    gemini-2.5-pro
+  
 # Expense Categorization Configuration
 expense_categories:
   Food:

@@ -232,14 +232,19 @@ def chat_with_local_llama32():
     Setting up a chat interface with the local llama32 model.
     Uses a loop to allow continuous conversation until the user exits.
     """
+    #TODO - Update the logging to use the config params
     logger.info("Starting chat with local Llama 3.2 model")
     
+    #TODO - Move Endpoints to config.yaml
     # Define the Ollama API endpoint
     OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
     
+    #TODO - Move the model to config.yaml
     # Define the model
     MODEL_NAME = "llama3.2"  # Or whichever model you have pulled and want to use
     
+    #TODO - Move the system prompt to config.yaml - This could be a prompt library / md files of sorts
+    #TODO - Move other model params to config.yaml
     # System prompt to set the assistant's behavior
     SYSTEM_PROMPT = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question is not clear or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
     
